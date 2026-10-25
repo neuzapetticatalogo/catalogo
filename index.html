@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Moda | Neuza Petti</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Montserrat:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --cor-texto: #3a3330;
+            --cor-suave: #8a7f78;
+            --cor-destaque: #b98b7b;      /* rosé / nude */
+            --cor-destaque-escuro: #9c6f60;
+            --cor-fundo: #ffffff;
+            --cor-bege: #f7f2ee;
+            --cor-linha: #eadfd8;
+            --fonte-titulo: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+            --fonte-texto: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        body {
+            font-family: var(--fonte-texto);
+            font-weight: 300;
+            background: var(--cor-fundo);
+            color: var(--cor-texto);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ===== CABEÇALHO ===== */
+        header {
+            background: rgba(255,255,255,0.94);
+            backdrop-filter: blur(8px);
+            padding: 1.2rem 2rem;
+            border-bottom: 1px solid var(--cor-linha);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .cabecalho-conteudo {
+            max-width: 1400px; margin: 0 auto;
+            display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 1rem;
+        }
+        .logo {
+            font-family: var(--fonte-titulo);
+            font-size: 2rem; font-weight: 500; font-style: italic;
+            color: var(--cor-texto); letter-spacing: 1px;
+        }
+        .navegacao { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem 2.2rem; }
+        .navegacao a {
+            margin-left: 0; text-decoration: none; color: var(--cor-texto);
+            font-size: 0.78rem; font-weight: 400; letter-spacing: 2px; text-transform: uppercase;
+            padding-bottom: 4px; border-bottom: 1px solid transparent;
+            transition: color 0.3s, border-color 0.3s;
+        }
+        .navegacao a:hover, .navegacao a.ativo { color: var(--cor-destaque-escuro); border-color: var(--cor-destaque); }
+
+        /* ===== FAIXA DE ABERTURA (fina, translúcida, mesma cor do rodapé) ===== */
+        .hero {
+            text-align: center; padding: 2rem 2rem 2.2rem;
+            background: rgba(247, 242, 238, 0.85);
+            border-bottom: 1px solid var(--cor-linha);
+        }
+        .hero h1 { line-height: 1.1; font-weight: 400; }
+        .hero-colecao {
+            display: block;
+            font-family: var(--fonte-texto);
+            font-size: 0.95rem; font-weight: 400; letter-spacing: 6px; text-transform: uppercase;
+            color: var(--cor-suave); margin-bottom: 0.3rem;
+        }
+        .hero-nome {
+            display: block;
+            font-family: var(--fonte-titulo);
+            font-size: 4rem; font-weight: 500; font-style: italic; letter-spacing: 1px;
+            color: var(--cor-texto);
+        }
+        .hero p {
+            font-family: var(--fonte-titulo);
+            font-size: 2.1rem; font-weight: 500; font-style: italic; line-height: 1.2;
+            color: var(--cor-destaque-escuro);
+            margin-top: 0.6rem;
+        }
+
+                .secao { display: none; }
+        .secao.visivel { display: block; }
+
+        .container { max-width: 1400px; margin: 2.5rem auto 4rem; padding: 0 2rem; }
+        .titulo-secao {
+            text-align: center; font-family: var(--fonte-titulo);
+            font-size: 2rem; font-weight: 500; letter-spacing: 1px;
+            margin-bottom: 2.5rem; color: var(--cor-texto);
+        }
+
+        /* ===== GRADE ADAPTÁVEL (masonry): cada imagem mantém sua proporção ===== */
+        .grade { column-width: 260px; column-gap: 2rem; }
+        .card {
+            display: inline-block; width: 100%;
+            margin-bottom: 2.2rem; break-inside: avoid;
+            background: transparent;
+        }
+        .card.clicavel { cursor: pointer; }
+
+        .card-imagem {
+            width: 100%; overflow: hidden; background: var(--cor-bege);
+            aspect-ratio: 768 / 1376; border-radius: 3px;
+        }
+        .card-imagem.carregada { aspect-ratio: auto; }
+        .card-imagem img { display: block; width: 100%; height: auto; transition: transform 0.6s ease; }
+        .card:hover .card-imagem img { transform: scale(1.03); }
+        .card-imagem.indisponivel {
+            display: flex; align-items: center; justify-content: center;
+            min-height: 200px; color: var(--cor-suave); font-size: 0.85rem; text-align: center; padding: 1rem;
+        }
+
+        .card-nome {
+            padding: 1rem 0 0; text-align: center;
+            font-family: var(--fonte-titulo); font-size: 1.5rem; font-weight: 500;
+            letter-spacing: 1px; color: var(--cor-texto);
+        }
+        .card-info { padding: 0.9rem 0 0; text-align: center; }
+        .card-categoria {
+            font-size: 0.68rem; color: var(--cor-suave); text-transform: uppercase;
+            letter-spacing: 2.5px; margin-bottom: 0.2rem;
+        }
+        .card-titulo {
+            font-family: var(--fonte-titulo); font-size: 1.35rem; font-weight: 500;
+            margin-bottom: 0.5rem; color: var(--cor-texto);
+        }
+        .card-descricao { margin-bottom: 1rem; }
+        .card-descricao p { font-size: 0.88rem; font-weight: 400; line-height: 1.55; color: #4a403b; }
+
+        .botao-interesse {
+            display: block; width: 100%; padding: 0.75rem;
+            background: transparent; color: var(--cor-texto);
+            border: 1px solid var(--cor-destaque); border-radius: 2px;
+            font-family: var(--fonte-texto); font-size: 0.72rem; font-weight: 500;
+            letter-spacing: 2.5px; text-transform: uppercase; text-decoration: none; text-align: center;
+            cursor: pointer; transition: background 0.3s, color 0.3s;
+        }
+        .botao-interesse:hover { background: var(--cor-destaque); color: #fff; }
+
+        /* ===== CATÁLOGO ===== */
+        .catalogo-secao { background: var(--cor-fundo); }
+        .voltar-btn {
+            background: transparent; border: none; color: var(--cor-suave);
+            font-family: var(--fonte-texto); font-size: 0.78rem; letter-spacing: 2px; text-transform: uppercase;
+            cursor: pointer; margin-bottom: 1.8rem; transition: color 0.3s;
+        }
+        .voltar-btn:hover { color: var(--cor-destaque-escuro); }
+
+        .filtros { margin-bottom: 2.8rem; display: flex; gap: 0.4rem 1.8rem; flex-wrap: wrap; justify-content: center; }
+        .botao-filtro {
+            padding: 0.4rem 0; border: none; background: transparent; cursor: pointer;
+            font-family: var(--fonte-texto); font-size: 0.78rem; font-weight: 400;
+            letter-spacing: 2px; text-transform: uppercase; color: var(--cor-suave);
+            border-bottom: 1px solid transparent; transition: color 0.3s, border-color 0.3s;
+        }
+        .botao-filtro.ativo, .botao-filtro:hover { color: var(--cor-texto); border-bottom-color: var(--cor-destaque); }
+
+        /* ===== CATEGORIAS DA PÁGINA PRINCIPAL ===== */
+        .grade-categorias { display: flex; flex-wrap: wrap; justify-content: center; gap: 2.5rem 2rem; }
+        .grade-categorias .card { width: 260px; margin-bottom: 0; display: block; }
+        .grade-categorias .card-imagem,
+        .grade-categorias .card-imagem.carregada { aspect-ratio: 3 / 4; }
+        .grade-categorias .card-imagem img { height: 100%; object-fit: cover; object-position: center 25%; }
+
+        /* ===== QUEM SOMOS (landing só com imagens) ===== */
+        .landing { max-width: 900px; margin: 0 auto; background: #fff; }
+        .landing .card-imagem { border-radius: 0; background: var(--cor-bege); }
+        .landing .card-imagem img { width: 100%; height: auto; display: block; }
+
+        /* ===== RODAPÉ (claro) ===== */
+        footer {
+            background: var(--cor-bege); color: var(--cor-texto);
+            padding: 3.5rem 2rem; text-align: center;
+            border-top: 1px solid var(--cor-linha);
+            font-size: 0.9rem;
+        }
+        .rodape-nome { font-family: var(--fonte-titulo); font-style: italic; font-weight: 500; font-size: 2rem; margin-bottom: 0.8rem; }
+        footer a { color: var(--cor-destaque-escuro); text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+
+        @media (max-width: 768px) {
+            header { padding: 1rem; }
+            .cabecalho-conteudo { flex-direction: column; gap: 0.6rem; }
+            .navegacao { gap: 0.5rem 1.4rem; }
+            .navegacao a { margin: 0; font-size: 0.7rem; letter-spacing: 1.5px; }
+            .hero { padding: 1.5rem 1rem 1.7rem; }
+            .hero-colecao { font-size: 0.8rem; letter-spacing: 4px; }
+            .hero-nome { font-size: 2.8rem; }
+            .hero p { font-size: 1.6rem; }
+            .container { padding: 0 1rem; margin-top: 2rem; }
+            .grade { column-width: 160px; column-gap: 1rem; }
+            .card { margin-bottom: 1.6rem; }
+            .card-nome { font-size: 1.25rem; }
+            .card-titulo { font-size: 1.15rem; }
+            .botao-interesse { font-size: 0.64rem; letter-spacing: 1.5px; padding: 0.7rem 0.3rem; }
+            .grade-categorias { gap: 1.8rem 1rem; }
+            .grade-categorias .card { width: calc(50% - 0.5rem); }
+            .filtros { gap: 0.3rem 1.1rem; }
+        }
+
+        /* ===== CATÁLOGO: ordem de leitura (esquerda → direita) e variações lado a lado ===== */
+        :root { --fonte-codigo: 'DM Mono', ui-monospace, 'Courier New', monospace; }
+
+        .grade {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 2.8rem 2rem;
+            align-items: start;
+            column-width: auto;
+        }
+        .grade .card { margin-bottom: 0; display: block; }
+
+        .produto-grupo .grupo-itens { display: grid; gap: 0 1.2rem; align-items: start; }
+        .produto-grupo .variacao { min-width: 0; }
+
+        /* código do produto: fonte monoespaçada (todos os caracteres do mesmo tamanho) */
+        .card-titulo {
+            font-family: var(--fonte-codigo);
+            font-size: 0.95rem; font-weight: 500; letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 600px) {
+            .grade { grid-template-columns: repeat(2, 1fr); gap: 2rem 1rem; }
+            .produto-grupo .grupo-itens { gap: 0 0.8rem; }
+            .card-titulo { font-size: 0.8rem; letter-spacing: 0.5px; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="cabecalho-conteudo">
+            <nav class="navegacao">
+                <a href="#" data-ir="inicio">Início</a>
+                <a href="#" data-ir="catalogo">Catálogo</a>
+                <a href="#" data-ir="quem-somos">Quem Somos</a>
+                <a href="#contato">Contato</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <h1><span class="hero-colecao">Coleção</span><span class="hero-nome">Neuza Petti</span></h1>
+        <p>Arte em movimento.</p>
+    </section>
+
+    <!-- INÍCIO — Categorias -->
+    <section class="secao visivel" id="secao-inicio">
+        <div class="container">
+            <h2 class="titulo-secao">Nossos Produtos</h2>
+            <div class="grade-categorias" id="grade-categorias"></div>
+        </div>
+    </section>
+
+    <!-- CATÁLOGO — Produtos -->
+    <section class="secao catalogo-secao" id="secao-catalogo">
+        <div class="container">
+            <button class="voltar-btn" id="btn-voltar">← Voltar para Categorias</button>
+            <div class="filtros" id="filtros"></div>
+            <div class="grade" id="grade-produtos"></div>
+        </div>
+    </section>
+
+    <!-- QUEM SOMOS -->
+    <section class="secao" id="secao-quem-somos">
+        <div class="landing" id="landing-quem-somos"></div>
+    </section>
+
+    <footer id="contato">
+        <h3 class="rodape-nome">Neuza Petti</h3>
+        <p style="margin: 1rem 0 0.5rem;">Guarujá — SP</p>
+        <p style="margin-bottom: 0.5rem;"><a href="https://wa.me/5511968984177" target="_blank" rel="noopener">WhatsApp: (11) 96898-4177</a></p>
+        <p style="margin-bottom: 1rem;">neuzapetti@gmail.com</p>
+        <p style="opacity: 0.6; font-size: 0.9rem;">© 2026 Neuza Petti — Todos os direitos reservados</p>
+    </footer>
+
+    <script>
+        // ================= CONFIGURAÇÃO =================
+        const WHATSAPP = '5511968984177'; // 55 (Brasil) + DDD + número
+        const IMGUR = 'https://i.imgur.com/';
+
+        // Imagens da página "Quem Somos", exibidas em tamanho grande, uma abaixo da outra, na ordem da lista
+        const FOTOS_QUEM_SOMOS = ['ZN7G1yk','0v6TjbK','kt5gxze','e2g2Cc5','M8Tg9ww','u0DlupS','jNRihve'];
+
+        // ================= CÓDIGOS / NOMES DOS PRODUTOS =================
+        // Para trocar o nome de um produto pelo código dele, edite só o texto da DIREITA.
+        // (A esquerda é o código da imagem no imgur - não mexa.)
+        // Esse nome aparece no card e na mensagem enviada pelo WhatsApp.
+        const NOMES = {
+            // ----- Lenços -----
+            'aRBsjsA': 'LENCO-NP-018',
+            'MRBqLoy': 'ECHARPE-NP-015A',
+            'GGj7jFG': 'ECHARPE-NP-015B',
+            'O75Yaj6': 'LENCO-NP-001',
+            '9lbXMWC': 'LENCO-NP-003A',
+            'NH8Y1oz': 'LENCO-NP-003B',
+            '3BVQ8yx': 'LENCO-NP-004A',
+            'vv6AfX3': 'LENCO-NP-004B',
+            'uJpRyC2': 'LENCO-NP-005',
+            'sdVhrAN': 'LENCO-NP-006',
+            'lkWV1oa': 'LENCO-NP-007',
+            'NI1qzi2': 'LENCO-NP-008',
+            'lB330hw': 'LENCO-NP-009',
+            '3oVVKSS': 'LENCO-NP-010X',
+            'NRYE3RC': 'LENCO-NP-011',
+            'bHQ35Q6': 'LENCO-NP-012',
+            'xUUZtrt': 'LENCO-NP-013B',
+            'WkBdUkZ': 'LENCO-NP-014',
+            'xK1jbKC': 'LENCO-NP-015',
+            'Fl0dnu3': 'LENCO-NP-017.',
+            // ----- Cangas -----
+            'cugh0TH': 'CANGA-NP-001',
+            '6jUJKho': 'CANGA-NP-003A',
+            'ZmZzutV': 'CANGA-NP-003B',
+            'QKVs0ec': 'CANGA-NP-004A',
+            'Q78iZxl': 'CANGA-NP-004B-768PX',
+            'lUS7ihW': 'CANGA-NP-005',
+            'J11u7R5': 'CANGA-NP-006',
+            'oCFAcBm': 'CANGA-NP-007',
+            'b4glk9c': 'CANGA-NP-008',
+            'LKEFi7B': 'CANGA-NP-009',
+            'B9rTCn1': 'CANGA-NP-010B',
+            'LHPqq7W': 'CANGA-NP-010C',
+            'OKLLl4P': 'CANGA-NP-012',
+            'BDn1fAj': 'CANGA-NP-013',
+            'zsRIWht': 'CANGA-NP-014',
+            'hZ02lkk': 'CANGA-NP-015C',
+            'f2HtQyy': 'CANGA-NP-017',
+            'KLRKeOf': 'CANGA-NP-018',
+            // ----- Kaftans -----
+            'YfFcTD5': 'KF-NP-001L',
+            'rrxWMwU': 'KF-NP-001M',
+            'sMrIDnY': 'KF-NP-003L',
+            'AOtDD2V': 'KF-NP-003M',
+            'R2q4LT5': 'KF-NP-004L',
+            'k2lmHWq': 'KF-NP-004M',
+            'MtjRb9S': 'KF-NP-005L',
+            'vqEyKNi': 'KF-NP-005M',
+            'sqiRZ2b': 'KF-NP-006L',
+            'd0sIfuu': 'KF-NP-006M',
+            'DLkA48O': 'KF-NP-007L',
+            'hCaHKM7': 'KF-NP-007M',
+            'VkdZVhc': 'KF-NP-008L',
+            'pdzhZUQ': 'KF-NP-008M',
+            'YoMPytC': 'KF-NP-009L',
+            '7yArIFH': 'KF-NP-009M',
+            'pgOjiq6': 'KF-NP-010L',
+            'ieapnRD': 'KF-NP-010M',
+            '9xTtJPT': 'KF-NP-012L',
+            'DOu8fTh': 'KF-NP-012M',
+            'PwMehnd': 'KF-NP-013L',
+            'zwqBbHx': 'KF-NP-013M',
+            'Okoa5kM': 'KF-NP-014L',
+            'XiPwILI': 'KF-NP-014M',
+            'pCNwUs3': 'KF-NP-015L',
+            'yMpazoY': 'KF-NP-015M',
+            '4GQcewg': 'KF-NP-017L',
+            'wBM0paG': 'KF-NP-017M',
+            'wvQoT33': 'KF-NP-018L',
+            'BGfAuDv': 'KF-NP-018M',
+            // ----- Clutchs -----
+            'gF08dza': 'CLUTCH-NP-001-900PX',
+            '1mfL5Br': 'CLUTCH-NP-003-900PX',
+            'ps7OHta': 'CLUTCH-NP-004-900PX',
+            'fT1OLkx': 'CLUTCH-NP-005-900PX',
+            'm8PIsdp': 'CLUTCH-NP-006-900PX',
+            'pFoWFMw': 'CLUTCH-NP-007-900PX',
+            'Lkw95K0': 'CLUTCH-NP-008-900PX',
+            'lwFytRp': 'CLUTCH-NP-009-900PX',
+            '2Ubw9hQ': 'CLUTCH-NP-010-900PX',
+            '74DV1FD': 'CLUTCH-NP-012-900PX',
+            'Lb0vUem': 'CLUTCH-NP-013-900PX',
+            'r6yw8rs': 'CLUTCH-NP-014-900PX',
+            '0G9ynrl': 'CLUTCH-NP-015-900PX',
+            'r2LpuUB': 'CLUTCH-NP-017-900PX',
+            'CqjzXWD': 'CLUTCH-NP-018-900PX',
+            // ----- Mini Ecobags -----
+            'z6dGx1V': 'MINI-ECO-NP-001',
+            '4q0LVtb': 'MINI-ECO-NP-003A',
+            'G3vjh87': 'MINI-ECO-NP-003B',
+            'gtN2apW': 'MINI-ECO-NP-004A',
+            'VUNLBQx': 'MINI-ECO-NP-004B',
+            'PtsQZAv': 'MINI-ECO-NP-005',
+            'dFzo1mI': 'MINI-ECO-NP-006',
+            'fwYltdt': 'MINI-ECO-NP-007',
+            '9mDSNBW': 'MINI-ECO-NP-008',
+            '2tbVgqa': 'MINI-ECO-NP-009',
+            'AMuq06I': 'MINI-ECO-NP-010',
+            'JdF8k6g': 'MINI-ECO-NP-011',
+            'xW30zK5': 'MINI-ECO-NP-012',
+            'kleDIbP': 'MINI-ECO-NP-013',
+            'VYu1NdG': 'MINI-ECO-NP-014',
+            '8H3GURL': 'MINI-ECO-NP-015',
+            'MNTJUnJ': 'MINI-ECO-NP-017',
+            'qPjosr0': 'MINI-ECO-NP-018',
+        };
+
+        // Para adicionar um produto, basta incluir o código da imagem do imgur na lista.
+        // Exemplo: 'ABC123x' => https://i.imgur.com/ABC123x.jpeg
+        const CATEGORIAS = [
+            {
+                id: 'lencos', nome: 'Lenços', singular: 'Lenço', capa: 'T676TP7',
+                descricao: ['Grande 100 x 100 cm · Médio 70 x 70 cm', 'Tecido: seda mista premium'],
+                // Echarpes ficam junto com os lenços. Para marcar uma peça como echarpe, inclua o código da imagem aqui:
+                // especiais: { 'CODIGO_IMGUR': { nome: 'Echarpe 01', descricao: ['66 x 174 cm', 'Tecido: seda mista premium'] } },
+                especiais: {},
+                // Peças cujo código começa com o prefixo abaixo usam esta descrição (ex.: as echarpes)
+                porPrefixo: {
+                    'ECHARPE': ['66 x 174 cm', 'Tecido: seda mista premium']
+                },
+                imagens: ['aRBsjsA','MRBqLoy','GGj7jFG','O75Yaj6','9lbXMWC','NH8Y1oz','3BVQ8yx','vv6AfX3','uJpRyC2','sdVhrAN','lkWV1oa','NI1qzi2','lB330hw','3oVVKSS','NRYE3RC','bHQ35Q6','xUUZtrt','WkBdUkZ','xK1jbKC','Fl0dnu3']
+            },
+            {
+                id: 'cangas', nome: 'Cangas', singular: 'Canga', capa: 'CvXGFmn',
+                descricao: ['Tamanho: 110 x 140 cm', 'Tecido: seda mista premium'],
+                imagens: ['cugh0TH','6jUJKho','ZmZzutV','QKVs0ec','Q78iZxl','lUS7ihW','J11u7R5','oCFAcBm','b4glk9c','LKEFi7B','B9rTCn1','LHPqq7W','OKLLl4P','BDn1fAj','zsRIWht','hZ02lkk','f2HtQyy','KLRKeOf']
+            },
+            {
+                id: 'kaftans', nome: 'Kaftans', singular: 'Kaftan', capa: 'sMrIDnY',
+                descricao: ['Disponíveis no Longo com 1,02 x 1,38 m e Midi com 1,02 x 1,18 m', 'Tecido: seda mista premium'],
+                // Tamanho específico de cada variação (letra final do código): L = Longo, M = Midi
+                variacoes: {
+                    L: ['Longo: 1,02 x 1,38 m', 'Tecido: seda mista premium'],
+                    M: ['Midi: 1,02 x 1,18 m', 'Tecido: seda mista premium']
+                },
+                imagens: ['YfFcTD5','rrxWMwU','sMrIDnY','AOtDD2V','R2q4LT5','k2lmHWq','MtjRb9S','vqEyKNi','sqiRZ2b','d0sIfuu','DLkA48O','hCaHKM7','VkdZVhc','pdzhZUQ','YoMPytC','7yArIFH','pgOjiq6','ieapnRD','9xTtJPT','DOu8fTh','PwMehnd','zwqBbHx','Okoa5kM','XiPwILI','pCNwUs3','yMpazoY','4GQcewg','wBM0paG','wvQoT33','BGfAuDv']
+            },
+            {
+                id: 'clutchs', nome: 'Clutchs', singular: 'Clutch', capa: 'STiUpwX',
+                descricao: ['Tamanho: 17 x 28 cm', 'Tecido: canvas barcelona'],
+                imagens: ['gF08dza','1mfL5Br','ps7OHta','fT1OLkx','m8PIsdp','pFoWFMw','Lkw95K0','lwFytRp','2Ubw9hQ','74DV1FD','Lb0vUem','r6yw8rs','0G9ynrl','r2LpuUB','CqjzXWD']
+            },
+            {
+                id: 'mini-ecobags', nome: 'Mini Ecobags', singular: 'Mini Ecobag', capa: 'JCk7f4f',
+                descricao: ['Tamanho: 17 x 24 cm', 'Tecido: algodão cru forrada'],
+                imagens: ['z6dGx1V','4q0LVtb','G3vjh87','gtN2apW','VUNLBQx','PtsQZAv','dFzo1mI','fwYltdt','9mDSNBW','2tbVgqa','AMuq06I','JdF8k6g','xW30zK5','kleDIbP','VYu1NdG','8H3GURL','MNTJUnJ','qPjosr0']
+            }
+        ];
+
+        // ================= FUNÇÕES AUXILIARES =================
+        const $ = (id) => document.getElementById(id);
+        const EXTENSOES = ['jpeg', 'jpg', 'png', 'webp', 'gif'];
+        const url = (codigo, ext = 'jpeg') => IMGUR + codigo + '.' + ext;
+
+        function linkWhatsApp(produto) {
+            const msg = `Olá! Tenho interesse no produto: ${produto}`;
+            return `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`;
+        }
+
+        // Cria a imagem e, ao carregar, libera a proporção original (9:16, quadrada, etc.)
+        function criarImagem(codigo, alt) {
+            const caixa = document.createElement('div');
+            caixa.className = 'card-imagem';
+            const img = document.createElement('img');
+            img.alt = alt;
+            img.loading = 'lazy';
+            img.referrerPolicy = 'no-referrer'; // evita bloqueio de imagem por referência (hotlink)
+            let tentativa = 0;
+            const liberar = () => caixa.classList.add('carregada');
+            img.addEventListener('load', liberar);
+            img.addEventListener('error', () => {
+                tentativa++;
+                if (tentativa < EXTENSOES.length) {
+                    img.src = url(codigo, EXTENSOES[tentativa]); // tenta .jpg, .png, .webp, .gif
+                } else {
+                    caixa.textContent = 'Imagem indisponível';
+                    caixa.classList.add('carregada', 'indisponivel');
+                }
+            });
+            img.src = url(codigo, EXTENSOES[0]);
+            caixa.appendChild(img);
+            if (img.complete && img.naturalWidth > 0) liberar();
+            return caixa;
+        }
+
+        // ================= CONSTRUÇÃO DA PÁGINA =================
+        function montarCategorias() {
+            const grade = $('grade-categorias');
+            CATEGORIAS.forEach(cat => {
+                const card = document.createElement('div');
+                card.className = 'card clicavel';
+                card.appendChild(criarImagem(cat.capa, cat.nome));
+                const nome = document.createElement('h3');
+                nome.className = 'card-nome';
+                nome.textContent = cat.nome;
+                card.appendChild(nome);
+                card.addEventListener('click', () => mostrarCatalogo(cat.id));
+                grade.appendChild(card);
+            });
+        }
+
+        function montarFiltros() {
+            const filtros = $('filtros');
+            const itens = [{ id: 'todos', nome: 'Todos' }, ...CATEGORIAS];
+            itens.forEach(item => {
+                const b = document.createElement('button');
+                b.className = 'botao-filtro';
+                b.dataset.categoria = item.id;
+                b.textContent = item.nome;
+                b.addEventListener('click', () => aplicarFiltro(item.id));
+                filtros.appendChild(b);
+            });
+        }
+
+        function nomeDoProduto(cat, codigo, i) {
+            const especial = cat.especiais && cat.especiais[codigo];
+            if (especial && especial.nome) return especial.nome;
+            if (NOMES[codigo]) return NOMES[codigo];
+            if (cat.nomes && cat.nomes[i]) return cat.nomes[i];
+            return `${cat.singular} ${String(i + 1).padStart(2, '0')}`;
+        }
+
+        // Ordena pela sequência numérica do código e junta variações
+        // (ex.: KF-NP-003L + KF-NP-003M => um bloco com as duas lado a lado)
+        function agruparProdutos(cat) {
+            const itens = cat.imagens.map((codigo, i) => {
+                const nome = nomeDoProduto(cat, codigo, i);
+                const m = nome.match(/^(.*\d)([A-Za-z])$/); // termina em número + letra
+                return { codigo, nome, base: m ? m[1] : nome, sufixo: m ? m[2].toUpperCase() : '' };
+            });
+            itens.sort((a, b) => a.nome.localeCompare(b.nome, 'pt', { numeric: true, sensitivity: 'base' }));
+
+            const grupos = [];
+            const porBase = {};
+            itens.forEach(item => {
+                if (item.sufixo) {
+                    if (!porBase[item.base]) {
+                        porBase[item.base] = [];
+                        grupos.push(porBase[item.base]);
+                    }
+                    porBase[item.base].push(item);
+                } else {
+                    grupos.push([item]);
+                }
+            });
+            return grupos;
+        }
+
+        function linhasDoProduto(cat, item) {
+            const especial = cat.especiais && cat.especiais[item.codigo];
+            const prefixo = cat.porPrefixo && Object.keys(cat.porPrefixo)
+                .find(p => item.nome.toUpperCase().startsWith(p));
+            return (especial && especial.descricao)
+                || (prefixo && cat.porPrefixo[prefixo])
+                || (item.sufixo && cat.variacoes && cat.variacoes[item.sufixo])
+                || cat.descricao || [];
+        }
+
+        function criarInfo(cat, item) {
+            const linhas = linhasDoProduto(cat, item);
+
+            const info = document.createElement('div');
+            info.className = 'card-info';
+            info.innerHTML = `
+                <div class="card-categoria"></div>
+                <h3 class="card-titulo"></h3>
+                <div class="card-descricao"></div>
+                <a target="_blank" rel="noopener" class="botao-interesse">Tenho Interesse</a>`;
+            info.querySelector('.card-categoria').textContent = cat.nome;
+            info.querySelector('.card-titulo').textContent = item.nome;
+            const boxDesc = info.querySelector('.card-descricao');
+            linhas.forEach(l => {
+                const p = document.createElement('p');
+                p.textContent = l;
+                boxDesc.appendChild(p);
+            });
+            info.querySelector('a').href = linkWhatsApp(item.nome);
+            return info;
+        }
+        const codigoDe = (item) => item.codigo;
+
+        function montarProdutos() {
+            const grade = $('grade-produtos');
+            CATEGORIAS.forEach(cat => {
+                agruparProdutos(cat).forEach(grupo => {
+                    const card = document.createElement('div');
+                    card.dataset.categoria = cat.id;
+
+                    if (grupo.length === 1) {
+                        card.className = 'card produto';
+                        card.appendChild(criarImagem(grupo[0].codigo, grupo[0].nome));
+                        card.appendChild(criarInfo(cat, grupo[0]));
+                    } else {
+                        // variações lado a lado (ocupa o espaço de N cards)
+                        const n = grupo.length;
+                        card.className = 'card produto produto-grupo';
+                        card.style.gridColumn = `span ${n}`;
+                        const wrap = document.createElement('div');
+                        wrap.className = 'grupo-itens';
+                        wrap.style.gridTemplateColumns = `repeat(${n}, minmax(0, 1fr))`;
+                        grupo.forEach(item => {
+                            const v = document.createElement('div');
+                            v.className = 'variacao';
+                            v.appendChild(criarImagem(item.codigo, item.nome));
+                            v.appendChild(criarInfo(cat, item));
+                            wrap.appendChild(v);
+                        });
+                        card.appendChild(wrap);
+                    }
+                    grade.appendChild(card);
+                });
+            });
+        }
+
+        function montarGaleria() {
+            const landing = $('landing-quem-somos');
+            FOTOS_QUEM_SOMOS.forEach((codigo, i) => {
+                landing.appendChild(criarImagem(codigo, `Neuza Petti — ${i + 1}`));
+            });
+        }
+
+        // ================= NAVEGAÇÃO =================
+        function mostrarSecao(nome) {
+            ['inicio', 'catalogo', 'quem-somos'].forEach(s => {
+                $('secao-' + s).classList.toggle('visivel', s === nome);
+            });
+            document.querySelectorAll('[data-ir]').forEach(a => {
+                a.classList.toggle('ativo', a.dataset.ir === nome);
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function aplicarFiltro(cat) {
+            document.querySelectorAll('.botao-filtro').forEach(b => {
+                b.classList.toggle('ativo', b.dataset.categoria === cat);
+            });
+            document.querySelectorAll('.produto').forEach(p => {
+                p.style.display = (cat === 'todos' || p.dataset.categoria === cat) ? '' : 'none';
+            });
+        }
+
+        function mostrarCatalogo(cat = 'todos') {
+            aplicarFiltro(cat);
+            mostrarSecao('catalogo');
+        }
+
+        document.querySelectorAll('[data-ir]').forEach(a => {
+            a.addEventListener('click', (e) => {
+                e.preventDefault();
+                const destino = a.dataset.ir;
+                destino === 'catalogo' ? mostrarCatalogo('todos') : mostrarSecao(destino);
+            });
+        });
+        $('btn-voltar').addEventListener('click', () => mostrarSecao('inicio'));
+
+        // ================= INICIAR =================
+        montarCategorias();
+        montarFiltros();
+        montarProdutos();
+        montarGaleria();
+        aplicarFiltro('todos');
+        mostrarSecao('inicio');
+    </script>
+</body>
+</html>
