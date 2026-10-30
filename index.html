@@ -240,6 +240,7 @@
                 <a href="#" data-ir="inicio">Início</a>
                 <a href="#" data-ir="catalogo">Catálogo</a>
                 <a href="#" data-ir="quem-somos">Quem Somos</a>
+                <a href="#" data-ir="tabela-precos">Tabela de Preços</a>
                 <a href="#contato">Contato</a>
             </nav>
         </div>
@@ -272,6 +273,11 @@
         <div class="landing" id="landing-quem-somos"></div>
     </section>
 
+    <!-- TABELA DE PREÇOS -->
+    <section class="secao" id="secao-tabela-precos">
+        <div class="landing" id="landing-tabela-precos"></div>
+    </section>
+
     <footer id="contato">
         <h3 class="rodape-nome">Neuza Petti</h3>
         <p style="margin: 1rem 0 0.5rem;">Guarujá — SP</p>
@@ -287,6 +293,9 @@
 
         // Imagens da página "Quem Somos", exibidas em tamanho grande, uma abaixo da outra, na ordem da lista
         const FOTOS_QUEM_SOMOS = ['ZN7G1yk','0v6TjbK','kt5gxze','e2g2Cc5','M8Tg9ww','u0DlupS','jNRihve'];
+
+        // Imagens da página "Tabela de Preços" (código da imagem no imgur), uma abaixo da outra
+        const FOTOS_TABELA_PRECOS = ['BmCLasK'];
 
         // ================= CÓDIGOS / NOMES DOS PRODUTOS =================
         // Para trocar o nome de um produto pelo código dele, edite só o texto da DIREITA.
@@ -615,9 +624,16 @@
             });
         }
 
+        function montarTabelaPrecos() {
+            const landing = $('landing-tabela-precos');
+            FOTOS_TABELA_PRECOS.forEach((codigo, i) => {
+                landing.appendChild(criarImagem(codigo, `Tabela de Preços — ${i + 1}`));
+            });
+        }
+
         // ================= NAVEGAÇÃO =================
         function mostrarSecao(nome) {
-            ['inicio', 'catalogo', 'quem-somos'].forEach(s => {
+            ['inicio', 'catalogo', 'quem-somos', 'tabela-precos'].forEach(s => {
                 $('secao-' + s).classList.toggle('visivel', s === nome);
             });
             document.querySelectorAll('[data-ir]').forEach(a => {
@@ -654,6 +670,7 @@
         montarFiltros();
         montarProdutos();
         montarGaleria();
+        montarTabelaPrecos();
         aplicarFiltro('todos');
         mostrarSecao('inicio');
     </script>
